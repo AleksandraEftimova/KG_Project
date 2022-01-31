@@ -100,18 +100,64 @@ int main() {
     //cube vertices
     float vertices[] = {
             //x      y      z       texture
-            -15.0f, 0.0f, 15.0f,   0.0f, 0.0f,
-            15.0f,  0.0f, 15.0f,   1.0f, 0.0f,
-            15.0f,  0.0f, -15.0f,  1.0f, 1.0f,
+            -5.0f, 0.0f, 5.0f,   0.0f, 0.0f,
+            5.0f,  0.0f, 5.0f,   1.0f, 0.0f,
+            5.0f,  0.0f, -5.0f,  1.0f, 1.0f,
 
-            15.0f,  0.0f, -15.0f,  1.0f, 1.0f,
-            -15.0f, 0.0f, -15.0f,  0.0f, 1.0f,
-            -15.0f, 0.0f, 15.0f,   0.0f, 0.0f
+            5.0f,  0.0f, -5.0f,  1.0f, 1.0f,
+            -5.0f, 0.0f, -5.0f,  0.0f, 1.0f,
+            -5.0f, 0.0f, 5.0f,   0.0f, 0.0f
     };
 
     // world space positions of our cubes
     glm::vec3 cubePositions[] = {
             glm::vec3(0.0f, 0.0f, 0.0f), //center
+            //straight (5)
+            glm::vec3(0.0f, 0.0f, -10.0f),
+            glm::vec3(0.0f, 0.0f, -20.0f),
+            glm::vec3(0.0f, 0.0f, -30.0f),
+            glm::vec3(0.0f, 0.0f, -40.0f),
+            glm::vec3(0.0f, 0.0f, -50.0f),
+            //turn left (3)
+            glm::vec3(-10.0f, 0.0f, -50.0f),
+            glm::vec3(-20.0f, 0.0f, -50.0f),
+            glm::vec3(-30.0f, 0.0f, -50.0f),
+            //turn left again (2)
+            glm::vec3(-30.0f, 0.0f, -40.0f),
+            glm::vec3(-30.0f, 0.0f, -30.0f),
+            //turn right (3)
+            glm::vec3(-40.0f, 0.0f, -30.0f),
+            glm::vec3(-50.0f, 0.0f, -30.0f),
+            glm::vec3(-60.0f, 0.0f, -30.0f),
+            //turn left (2)
+            glm::vec3(-60.0f, 0.0f, -20.0f),
+            glm::vec3(-60.0f, 0.0f, -10.0f),
+            //turn right (2)
+            glm::vec3(-70.0f, 0.0f, -10.0f),
+            glm::vec3(-80.0f, 0.0f, -10.0f),
+            //turn left (2)
+            glm::vec3(-80.0f, 0.0f, 0.0f),
+            glm::vec3(-80.0f, 0.0f, 10.0f),
+            //turn left again (4)
+            glm::vec3(-70.0f, 0.0f, 10.0f),
+            glm::vec3(-60.0f, 0.0f, 10.0f),
+            glm::vec3(-50.0f, 0.0f, 10.0f),
+            glm::vec3(-40.0f, 0.0f, 10.0f),
+            //turn right (3)
+            glm::vec3(-40.0f, 0.0f, 20.0f),
+            glm::vec3(-40.0f, 0.0f, 30.0f),
+            glm::vec3(-40.0f, 0.0f, 40.0f),
+            //turn left (2)
+            glm::vec3(-30.0f, 0.0f, 40.0f),
+            glm::vec3(-20.0f, 0.0f, 40.0f),
+            //turn left (2)
+            glm::vec3(-20.0f, 0.0f, 30.0f),
+            glm::vec3(-20.0f, 0.0f, 20.0f),
+            //turn right (3)
+            glm::vec3(-10.0f, 0.0f, 20.0f),
+            glm::vec3(0.0f, 0.0f, 20.0f),
+            glm::vec3(10.0f, 0.0f, 20.0f)
+            //34 in total
     };
 
     unsigned int VBO, VAO;
@@ -152,7 +198,7 @@ int main() {
             true); // tell stb_image.h to flip loaded texture's on the y-axis.
     // The FileSystem::getPath(...) is part of the GitHub repository so we can
     // find files on any IDE/platform; replace it with your own image path.
-    unsigned char *data = stbi_load("../res/textures/floor.jpg", &width,
+    unsigned char *data = stbi_load("../res/textures/container.jpg", &width,
                                     &height, &nrChannels, 0);
     if (data) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
@@ -162,6 +208,7 @@ int main() {
         std::cout << "Failed to load texture" << std::endl;
     }
     stbi_image_free(data);
+
     // texture 2
     // ---------
 //  glGenTextures(1, &texture2);
@@ -251,11 +298,12 @@ int main() {
 
         // render boxes
         glBindVertexArray(VAO);
-        for (unsigned int i = 0; i < 1; i++) {
+        for (unsigned int i = 0; i < 35; i++) {
             // calculate the model matrix for each object and pass it to shader before
             // drawing
             glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
             model = glm::translate(model, cubePositions[i]);
+            transform = glm::translate(transform, glm::vec3(0.0f, 0.0f, 1.0f));
 //      float angle = 30.0f;
 //      model = glm::rotate(model, (float)glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.0f, -1.0f));
             ourShader.setMat4("model", model);
@@ -287,19 +335,19 @@ int main() {
 void processInput(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-
-
-    float cameraSpeed = 10.0f * deltaTime;
-//    for (int i=0; i<15.0f; i++) {
-    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+//
+//
+    float cameraSpeed = 0.7f * deltaTime;
+    for (int i=0; i<15.0f; i++) {
+//    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
         cameraPos += cameraSpeed * cameraFront;
-    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-        cameraPos -= cameraSpeed * cameraFront;
-    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-//    }
+//    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+//        cameraPos -= cameraSpeed * cameraFront;
+//    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+//        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+//    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+//        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+    }
 
 
 //    //koga se kliknuva space se dvizi cameraPos nagore pa nadole po y oskata, drug nacin za resavanje?
