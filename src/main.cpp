@@ -12,7 +12,6 @@ const std::string program_name = ("Camera");
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void mouse_callback(GLFWwindow *window, double xpos, double ypos);
-void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
 void processInput(GLFWwindow *window);
 
 // settings
@@ -24,11 +23,10 @@ float xx=0.0f;
 float yy=3.0f;
 float zz=0.0f;
 static glm::vec3 cameraPos = glm::vec3(xx, yy, zz);
-//static glm::vec3 cameraPos = glm::vec3(0.0f, 3.0f, 0.0f);
 static glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 static glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
-static bool firstMouse = true;
+static bool mouse = true;
 
 // yaw is initialized to -90.0 degrees since a yaw of 0.0
 // results in a direction vector pointing to the right so we
@@ -70,9 +68,8 @@ int main() {
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
-    glfwSetScrollCallback(window, scroll_callback);
 
-    // tell GLFW to capture our mouse
+    // tell GLFW to capture our arrows
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     // glad: load all OpenGL function pointers
@@ -97,7 +94,7 @@ int main() {
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
-    //cube vertices
+    //floor vertices
     float vertices[] = {
             //x      y      z       texture
             -5.0f, 0.0f, 5.0f,   0.0f, 0.0f,
@@ -112,52 +109,141 @@ int main() {
     // world space positions of our cubes
     glm::vec3 cubePositions[] = {
             glm::vec3(0.0f, 0.0f, 0.0f), //center
-            //straight (5)
+            //straight (8)
             glm::vec3(0.0f, 0.0f, -10.0f),
             glm::vec3(0.0f, 0.0f, -20.0f),
             glm::vec3(0.0f, 0.0f, -30.0f),
             glm::vec3(0.0f, 0.0f, -40.0f),
             glm::vec3(0.0f, 0.0f, -50.0f),
-            //turn left (3)
-            glm::vec3(-10.0f, 0.0f, -50.0f),
-            glm::vec3(-20.0f, 0.0f, -50.0f),
-            glm::vec3(-30.0f, 0.0f, -50.0f),
-            //turn left again (2)
-            glm::vec3(-30.0f, 0.0f, -40.0f),
-            glm::vec3(-30.0f, 0.0f, -30.0f),
-            //turn right (3)
-            glm::vec3(-40.0f, 0.0f, -30.0f),
-            glm::vec3(-50.0f, 0.0f, -30.0f),
-            glm::vec3(-60.0f, 0.0f, -30.0f),
-            //turn left (2)
-            glm::vec3(-60.0f, 0.0f, -20.0f),
-            glm::vec3(-60.0f, 0.0f, -10.0f),
-            //turn right (2)
-            glm::vec3(-70.0f, 0.0f, -10.0f),
-            glm::vec3(-80.0f, 0.0f, -10.0f),
-            //turn left (2)
-            glm::vec3(-80.0f, 0.0f, 0.0f),
-            glm::vec3(-80.0f, 0.0f, 10.0f),
-            //turn left again (4)
-            glm::vec3(-70.0f, 0.0f, 10.0f),
-            glm::vec3(-60.0f, 0.0f, 10.0f),
-            glm::vec3(-50.0f, 0.0f, 10.0f),
-            glm::vec3(-40.0f, 0.0f, 10.0f),
-            //turn right (3)
-            glm::vec3(-40.0f, 0.0f, 20.0f),
-            glm::vec3(-40.0f, 0.0f, 30.0f),
-            glm::vec3(-40.0f, 0.0f, 40.0f),
-            //turn left (2)
-            glm::vec3(-30.0f, 0.0f, 40.0f),
-            glm::vec3(-20.0f, 0.0f, 40.0f),
-            //turn left (2)
-            glm::vec3(-20.0f, 0.0f, 30.0f),
-            glm::vec3(-20.0f, 0.0f, 20.0f),
-            //turn right (3)
-            glm::vec3(-10.0f, 0.0f, 20.0f),
+            glm::vec3(0.0f, 0.0f, -60.0f),
+            glm::vec3(0.0f, 0.0f, -70.0f),
+            glm::vec3(0.0f, 0.0f, -80.0f),
+            //turn right (8)
+            glm::vec3(10.0f, 0.0f, -80.0f),
+            glm::vec3(20.0f, 0.0f, -80.0f),
+            glm::vec3(30.0f, 0.0f, -80.0f),
+            glm::vec3(40.0f, 0.0f, -80.0f),
+            glm::vec3(50.0f, 0.0f, -80.0f),
+            glm::vec3(60.0f, 0.0f, -80.0f),
+            glm::vec3(70.0f, 0.0f, -80.0f),
+            glm::vec3(80.0f, 0.0f, -80.0f),
+            //turn right again (5)
+            glm::vec3(80.0f, 0.0f, -70.0f),
+            glm::vec3(80.0f, 0.0f, -60.0f),
+            glm::vec3(80.0f, 0.0f, -50.0f),
+            glm::vec3(80.0f, 0.0f, -40.0f),
+            glm::vec3(80.0f, 0.0f, -30.0f),
+            //turn left (10)
+            glm::vec3(90.0f, 0.0f, -30.0f),
+            glm::vec3(100.0f, 0.0f, -30.0f),
+            glm::vec3(110.0f, 0.0f, -30.0f),
+            glm::vec3(120.0f, 0.0f, -30.0f),
+            glm::vec3(130.0f, 0.0f, -30.0f),
+            glm::vec3(140.0f, 0.0f, -30.0f),
+            glm::vec3(150.0f, 0.0f, -30.0f),
+            glm::vec3(160.0f, 0.0f, -30.0f),
+            glm::vec3(170.0f, 0.0f, -30.0f),
+            glm::vec3(180.0f, 0.0f, -30.0f),
+            //turn right (6)
+            glm::vec3(180.0f, 0.0f, -20.0f),
+            glm::vec3(180.0f, 0.0f, -10.0f),
+            glm::vec3(180.0f, 0.0f, 0.0f),
+            glm::vec3(180.0f, 0.0f, 10.0f),
+            glm::vec3(180.0f, 0.0f, 20.0f),
+            glm::vec3(180.0f, 0.0f, 30.0f),
+            //turn right (10)
+            glm::vec3(170.0f, 0.0f, 30.0f),
+            glm::vec3(160.0f, 0.0f, 30.0f),
+            glm::vec3(150.0f, 0.0f, 30.0f),
+            glm::vec3(140.0f, 0.0f, 30.0f),
+            glm::vec3(130.0f, 0.0f, 30.0f),
+            glm::vec3(120.0f, 0.0f, 30.0f),
+            glm::vec3(110.0f, 0.0f, 30.0f),
+            glm::vec3(100.0f, 0.0f, 30.0f),
+            glm::vec3(90.0f, 0.0f, 30.0f),
+            glm::vec3(80.0f, 0.0f, 30.0f),
+            //turn left (5)
+            glm::vec3(80.0f, 0.0f, 40.0f),
+            glm::vec3(80.0f, 0.0f, 50.0f),
+            glm::vec3(80.0f, 0.0f, 60.0f),
+            glm::vec3(80.0f, 0.0f, 70.0f),
+            glm::vec3(80.0f, 0.0f, 80.0f),
+            //turn right (8), opt.1
+            glm::vec3(80.0f, 0.0f, 80.0f),
+            glm::vec3(70.0f, 0.0f, 80.0f),
+            glm::vec3(60.0f, 0.0f, 80.0f),
+            glm::vec3(50.0f, 0.0f, 80.0f),
+            glm::vec3(40.0f, 0.0f, 80.0f),
+            glm::vec3(30.0f, 0.0f, 80.0f),
+            glm::vec3(20.0f, 0.0f, 80.0f),
+            glm::vec3(10.0f, 0.0f, 80.0f),
+            glm::vec3(0.0f, 0.0f, 80.0f),
+            //turn right (8)
+            glm::vec3(0.0f, 0.0f, 70.0f),
+            glm::vec3(0.0f, 0.0f, 60.0f),
+            glm::vec3(0.0f, 0.0f, 50.0f),
+            glm::vec3(0.0f, 0.0f, 40.0f),
+            glm::vec3(0.0f, 0.0f, 30.0f),
             glm::vec3(0.0f, 0.0f, 20.0f),
-            glm::vec3(10.0f, 0.0f, 20.0f)
-            //34 in total
+            glm::vec3(0.0f, 0.0f, 10.0f),
+            glm::vec3(0.0f, 0.0f, 0.0f),
+            //turn left (5), opt.2
+            glm::vec3(90.0f, 0.0f, 80.0f),
+            glm::vec3(100.0f, 0.0f, 80.0f),
+            glm::vec3(110.0f, 0.0f, 80.0f),
+            glm::vec3(120.0f, 0.0f, 80.0f),
+            glm::vec3(130.0f, 0.0f, 80.0f),
+            //turn right (5)
+            glm::vec3(130.0f, 0.0f, 90.0f),
+            glm::vec3(130.0f, 0.0f, 100.0f),
+            glm::vec3(130.0f, 0.0f, 110.0f),
+            glm::vec3(130.0f, 0.0f, 120.0f),
+            glm::vec3(130.0f, 0.0f, 130.0f),
+            //turn left (5)
+            glm::vec3(140.0f, 0.0f, 130.0f),
+            glm::vec3(150.0f, 0.0f, 130.0f),
+            glm::vec3(160.0f, 0.0f, 130.0f),
+            glm::vec3(170.0f, 0.0f, 130.0f),
+            glm::vec3(180.0f, 0.0f, 130.0f),
+            //turn right (5)
+            glm::vec3(180.0f, 0.0f, 140.0f),
+            glm::vec3(180.0f, 0.0f, 150.0f),
+            glm::vec3(180.0f, 0.0f, 160.0f),
+            glm::vec3(180.0f, 0.0f, 170.0f),
+            glm::vec3(180.0f, 0.0f, 180.0f),
+            //turn right (10)
+            glm::vec3(170.0f, 0.0f, 180.0f),
+            glm::vec3(160.0f, 0.0f, 180.0f),
+            glm::vec3(150.0f, 0.0f, 180.0f),
+            glm::vec3(140.0f, 0.0f, 180.0f),
+            glm::vec3(130.0f, 0.0f, 180.0f),
+            glm::vec3(120.0f, 0.0f, 180.0f),
+            glm::vec3(110.0f, 0.0f, 180.0f),
+            glm::vec3(100.0f, 0.0f, 180.0f),
+            glm::vec3(90.0f, 0.0f, 180.0f),
+            glm::vec3(80.0f, 0.0f, 180.0f),
+            //turn right (5)
+            glm::vec3(80.0f, 0.0f, 170.0f),
+            glm::vec3(80.0f, 0.0f, 160.0f),
+            glm::vec3(80.0f, 0.0f, 150.0f),
+            glm::vec3(80.0f, 0.0f, 140.0f),
+            glm::vec3(80.0f, 0.0f, 130.0f),
+            //turn left (8)
+            glm::vec3(70.0f, 0.0f, 130.0f),
+            glm::vec3(60.0f, 0.0f, 130.0f),
+            glm::vec3(50.0f, 0.0f, 130.0f),
+            glm::vec3(40.0f, 0.0f, 130.0f),
+            glm::vec3(30.0f, 0.0f, 130.0f),
+            glm::vec3(20.0f, 0.0f, 130.0f),
+            glm::vec3(10.0f, 0.0f, 130.0f),
+            glm::vec3(0.0f, 0.0f, 130.0f),
+            //turn right (5)
+            glm::vec3(0.0f, 0.0f, 120.0f),
+            glm::vec3(0.0f, 0.0f, 110.0f),
+            glm::vec3(0.0f, 0.0f, 100.0f),
+            glm::vec3(0.0f, 0.0f, 90.0f),
+            glm::vec3(0.0f, 0.0f, 80.0f),
+            //117 so far
     };
 
     unsigned int VBO, VAO;
@@ -198,7 +284,7 @@ int main() {
             true); // tell stb_image.h to flip loaded texture's on the y-axis.
     // The FileSystem::getPath(...) is part of the GitHub repository so we can
     // find files on any IDE/platform; replace it with your own image path.
-    unsigned char *data = stbi_load("../res/textures/container.jpg", &width,
+    unsigned char *data = stbi_load("../res/textures/floor.jpg", &width,
                                     &height, &nrChannels, 0);
     if (data) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
@@ -257,7 +343,7 @@ int main() {
 
         // render
         // ------
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClearColor(0.2f, 0.3f, 0.5f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // bind textures on corresponding texture units
@@ -282,14 +368,8 @@ int main() {
         glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
         ourShader.setMat4("view", view);
 
-        //jump and crouch
         glm::mat4 transform = glm::mat4(1.0f);
-        if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS) {
-            transform = glm::translate(transform, glm::vec3(0.0f, 1.0f, 0.0f));
-        }
-        if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-            transform = glm::translate(transform, glm::vec3(0.0f, -1.0f, 0.0f));
-        }
+
         // render container
         ourShader.use();
 
@@ -298,14 +378,12 @@ int main() {
 
         // render boxes
         glBindVertexArray(VAO);
-        for (unsigned int i = 0; i < 35; i++) {
+        for (unsigned int i = 0; i < 118; i++) {
             // calculate the model matrix for each object and pass it to shader before
             // drawing
             glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
             model = glm::translate(model, cubePositions[i]);
             transform = glm::translate(transform, glm::vec3(0.0f, 0.0f, 1.0f));
-//      float angle = 30.0f;
-//      model = glm::rotate(model, (float)glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.0f, -1.0f));
             ourShader.setMat4("model", model);
 
             glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -335,34 +413,39 @@ int main() {
 void processInput(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-//
-//
-    float cameraSpeed = 0.7f * deltaTime;
-    for (int i=0; i<15.0f; i++) {
-//    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-        cameraPos += cameraSpeed * cameraFront;
-//    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-//        cameraPos -= cameraSpeed * cameraFront;
-//    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-//        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-//    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+
+    float x=0.0f;
+    float z=-1.0f;
+    float sensitivity = 0.1f;
+    float cameraSpeed = 20.0f * deltaTime;
+    cameraPos += cameraSpeed * cameraFront;
+//    if ((z=-1.0f) || (z=1.0f)) {
+//        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+//            z=0.0f;
+//            x=-1.0f;
+//            cameraFront = glm::vec3(x, 0.0f, z);
+//        }
+//        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+//            z=0.0f;
+//            x=1.0f;
+//            cameraFront = glm::vec3(x, 0.0f, z);
+//        }
+//    }
+//    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
 //        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-    }
-
-
-//    //koga se kliknuva space se dvizi cameraPos nagore pa nadole po y oskata, drug nacin za resavanje?
-//    float limit = 7.0f;
-//    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-//        transform = glm::translate(transform, glm::vec3(0.0f, yy, 0.0f));
-//        if (yy < limit) {
-//            cameraPos += cameraSpeed * cameraUp;
-//            yy=limit;
-//        }
-//        if (yy > limit) {
-//            cameraPos -= cameraSpeed * cameraUp;
-//            yy = 0.0f;
-//        }
-//
+//    }
+//    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+//        cameraFront += glm::normalize(cameraFront) * cameraSpeed;
+//    }
+//    float xoffset = x;
+//    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+//        xoffset *= sensitivity;
+//        yaw += xoffset;
+//        glm::vec3 direction;
+//        direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+//        direction.y = sin(glm::radians(pitch));
+//        direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+//        cameraFront = glm::normalize(direction);
 //    }
 
 }
@@ -380,47 +463,34 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
 // -------------------------------------------------------
 void mouse_callback(GLFWwindow *window, double xposd, double yposd) {
     float xpos = static_cast<float>(xposd);
-    float ypos = static_cast<float>(yposd);
-    if (firstMouse) {
+//    float ypos = static_cast<float>(yposd);
+    if (mouse) {
         lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
+//        lastY = ypos;
+        mouse = false;
     }
 
     float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+//    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
     lastX = xpos;
-    lastY = ypos;
+//    lastY = ypos;
 
     float sensitivity = 0.1f; // change this value to your liking
     xoffset *= sensitivity;
-    yoffset *= sensitivity;
-
+//    yoffset *= sensitivity;
     yaw += xoffset;
-    pitch += yoffset;
+//    pitch += yoffset;
 
-    // make sure that when pitch is out of bounds, screen doesn't get flipped
-    //constraint values for camera movements along the pitch
-    if (pitch > 89.0f)
-        pitch = 89.0f;
-    if (pitch < -89.0f)
-        pitch = -89.0f;
+//     make sure that when pitch is out of bounds, screen doesn't get flipped
+//    constraint values for camera movements along the pitch
+    if (pitch > 90.0f)
+        pitch = 90.0f;
+    if (pitch < -90.0f)
+        pitch = -90.0f;
 
-    glm::vec3 front;
-    front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-    front.y = sin(glm::radians(pitch));
-    front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-    cameraFront = glm::normalize(front);
-}
-
-// glfw: whenever the mouse scroll wheel scrolls, this callback is called
-// ----------------------------------------------------------------------
-void scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
-    //no need for zoom
-//  if (fov >= 1.0f && fov <= 45.0f)
-//    fov -= static_cast<float>(yoffset);
-//  if (fov <= 1.0f)
-//    fov = 1.0f;
-//  if (fov >= 45.0f)
-//    fov = 45.0f;
+    glm::vec3 direction;
+    direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    direction.y = sin(glm::radians(pitch));
+    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    cameraFront = glm::normalize(direction);
 }
