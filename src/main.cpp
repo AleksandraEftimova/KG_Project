@@ -44,7 +44,6 @@ static float lastFrame = 0.0f;
 
 int main() {
     // glfw: initialize and configure
-    // ------------------------------
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -57,7 +56,6 @@ int main() {
 #endif
 
     // glfw window creation
-    // --------------------
     GLFWwindow *window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT,
                                           program_name.c_str(), nullptr, nullptr);
     if (window == nullptr) {
@@ -69,22 +67,19 @@ int main() {
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
 
-    // tell GLFW to capture our arrows
+    // tell GLFW to capture our mouse
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     // glad: load all OpenGL function pointers
-    // ---------------------------------------
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) {
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
 
     // configure global opengl state
-    // -----------------------------
     glEnable(GL_DEPTH_TEST);
 
     // build and compile our shader program
-    // ------------------------------------
     std::string shader_location("../res/shaders/");
 
     std::string used_shaders("shader");
@@ -93,7 +88,6 @@ int main() {
                      shader_location + used_shaders + std::string(".frag"));
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
-    // ------------------------------------------------------------------
     //floor vertices
     float vertices[] = {
             //x      y      z       texture
@@ -106,9 +100,9 @@ int main() {
             -5.0f, 0.0f, 5.0f,   0.0f, 0.0f
     };
 
-    // world space positions of our cubes
+    // world space positions of our floor
     glm::vec3 cubePositions[] = {
-            glm::vec3(0.0f, 0.0f, 0.0f), //center
+            glm::vec3(0.0f, 0.0f, 0.0f),
             //straight (8)
             glm::vec3(0.0f, 0.0f, -10.0f),
             glm::vec3(0.0f, 0.0f, -20.0f),
@@ -264,10 +258,8 @@ int main() {
     glEnableVertexAttribArray(1);
 
     // load and create a texture
-    // -------------------------
     unsigned int texture1;
     // texture 1
-    // ---------
     glGenTextures(1, &texture1);
     glBindTexture(GL_TEXTURE_2D, texture1);
     // set the texture wrapping parameters
@@ -295,62 +287,28 @@ int main() {
     }
     stbi_image_free(data);
 
-    // texture 2
-    // ---------
-//  glGenTextures(1, &texture2);
-//  glBindTexture(GL_TEXTURE_2D, texture2);
-    // set the texture wrapping parameters
-//  glTexParameteri(
-//      GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
-//      GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
-//  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    // set texture filtering parameters
-//  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-//  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    // load image, create texture and generate mipmaps
-//  data = stbi_load("../res/textures/awesomeface.png", &width, &height,
-//                   &nrChannels, 0);
-//  if (data) {
-    // note that the awesomeface.png has transparency and thus an alpha channel,
-    // so make sure to tell OpenGL the data type is of GL_RGBA
-//    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
-//                 GL_UNSIGNED_BYTE, data);
-//    glGenerateMipmap(GL_TEXTURE_2D);
-//  } else {
-//    std::cout << "Failed to load texture" << std::endl;
-//  }
-//  stbi_image_free(data);
-
     // tell opengl for each sampler to which texture unit it belongs to (only has
     // to be done once)
-    // -------------------------------------------------------------------------------------------
     ourShader.use();
     ourShader.setInt("texture1", 0);
-//  ourShader.setInt("texture2", 1);
 
     // render loop
-    // -----------
     while (!glfwWindowShouldClose(window)) {
         // per-frame time logic
-        // --------------------
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
         // input
-        // -----
         processInput(window);
 
         // render
-        // ------
         glClearColor(0.2f, 0.3f, 0.5f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // bind textures on corresponding texture units
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture1);
-//    glActiveTexture(GL_TEXTURE1);
-//    glBindTexture(GL_TEXTURE_2D, texture2);
 
         // activate shader
         ourShader.use();
@@ -391,31 +349,27 @@ int main() {
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved
         // etc.)
-        // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
     // optional: de-allocate all resources once they've outlived their purpose:
-    // ------------------------------------------------------------------------
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
-    // ------------------------------------------------------------------
     glfwTerminate();
     return 0;
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this
 // frame and react accordingly
-// ---------------------------------------------------------------------------------------------------------
 void processInput(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
-    float x=0.0f;
-    float z=-1.0f;
+//    float x=0.0f;
+//    float z=-1.0f;
     float sensitivity = 0.1f;
     float cameraSpeed = 20.0f * deltaTime;
     cameraPos += cameraSpeed * cameraFront;
@@ -431,12 +385,14 @@ void processInput(GLFWwindow *window) {
 //            cameraFront = glm::vec3(x, 0.0f, z);
 //        }
 //    }
+
 //    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
 //        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
 //    }
 //    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
 //        cameraFront += glm::normalize(cameraFront) * cameraSpeed;
 //    }
+
 //    float xoffset = x;
 //    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
 //        xoffset *= sensitivity;
@@ -452,7 +408,6 @@ void processInput(GLFWwindow *window) {
 
 // glfw: whenever the window size changed (by OS or user resize) this callback
 // function executes
-// ---------------------------------------------------------------------------------------------
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
     // make sure the viewport matches the new window dimensions; note that width
     // and height will be significantly larger than specified on retina displays.
@@ -460,7 +415,6 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
 }
 
 // glfw: whenever the mouse moves, this callback is called
-// -------------------------------------------------------
 void mouse_callback(GLFWwindow *window, double xposd, double yposd) {
     float xpos = static_cast<float>(xposd);
 //    float ypos = static_cast<float>(yposd);
@@ -475,7 +429,7 @@ void mouse_callback(GLFWwindow *window, double xposd, double yposd) {
     lastX = xpos;
 //    lastY = ypos;
 
-    float sensitivity = 0.1f; // change this value to your liking
+    float sensitivity = 0.1f;
     xoffset *= sensitivity;
 //    yoffset *= sensitivity;
     yaw += xoffset;
