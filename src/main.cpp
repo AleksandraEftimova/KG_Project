@@ -1,17 +1,13 @@
 #include <OpenGLPrj.hpp>
-
 #include <GLFW/glfw3.h>
-
 #include <Shader.hpp>
-
 #include <iostream>
 #include <string>
 #include <vector>
 
-const std::string program_name = ("Camera");
+const std::string program_name = ("Temple Run-based game");
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
-void mouse_callback(GLFWwindow *window, double xpos, double ypos);
 void processInput(GLFWwindow *window);
 
 // settings
@@ -19,14 +15,13 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 800;
 
 // camera
-float xx=0.0f;
-float yy=3.0f;
-float zz=0.0f;
-static glm::vec3 cameraPos = glm::vec3(xx, yy, zz);
+float x=0.0f;
+float y=3.0f;
+float z=0.0f;
+static glm::vec3 cameraPos = glm::vec3(x, y, z);
 static glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 static glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
-static bool mouse = true;
 
 // yaw is initialized to -90.0 degrees since a yaw of 0.0
 // results in a direction vector pointing to the right so we
@@ -65,7 +60,6 @@ int main() {
     }
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    glfwSetCursorPosCallback(window, mouse_callback);
 
     // tell GLFW to capture our mouse
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -267,23 +261,18 @@ int main() {
 
     // load and create a texture
     unsigned int texture1;
-    // texture 1
+    // texture
     glGenTextures(1, &texture1);
     glBindTexture(GL_TEXTURE_2D, texture1);
-    // set the texture wrapping parameters
-    glTexParameteri(
-            GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
-            GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
+    // set texture wrapping to GL_REPEAT (default wrapping method)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     // set texture filtering parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     // load image, create texture and generate mipmaps
     int width, height, nrChannels;
-    stbi_set_flip_vertically_on_load(
-            true); // tell stb_image.h to flip loaded texture's on the y-axis.
-    // The FileSystem::getPath(...) is part of the GitHub repository so we can
-    // find files on any IDE/platform; replace it with your own image path.
+    stbi_set_flip_vertically_on_load(true);
     unsigned char *data = stbi_load("../res/textures/floor.jpg", &width,
                                     &height, &nrChannels, 0);
     if (data) {
@@ -295,8 +284,6 @@ int main() {
     }
     stbi_image_free(data);
 
-    // tell opengl for each sampler to which texture unit it belongs to (only has
-    // to be done once)
     ourShader.use();
     ourShader.setInt("texture1", 0);
 
@@ -321,8 +308,7 @@ int main() {
         // activate shader
         ourShader.use();
 
-        // pass projection matrix to shader (note that in this case it could change
-        // every frame)
+        // pass projection matrix to shader
         glm::mat4 projection = glm::perspective(glm::radians(fov),
                                                 static_cast<float>(SCR_WIDTH) /
                                                 static_cast<float>(SCR_HEIGHT),
@@ -342,10 +328,8 @@ int main() {
         unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
         glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
 
-        // render boxes
         glBindVertexArray(VAO);
         for (unsigned int i = 0; i < 125; i++) {
-            // calculate the model matrix for each object and pass it to shader before drawing
             glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
             model = glm::translate(model, cubePositions[i]);
             transform = glm::translate(transform, glm::vec3(0.0f, 0.0f, 1.0f));
@@ -354,13 +338,11 @@ int main() {
             glDrawArrays(GL_TRIANGLES, 0, 6);
         }
 
-        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved
-        // etc.)
+        // glfw: swap buffers and poll IO events (keys pressed/released etc.)
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
-    // optional: de-allocate all resources once they've outlived their purpose:
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
 
@@ -369,8 +351,7 @@ int main() {
     return 0;
 }
 
-// process all input: query GLFW whether relevant keys are pressed/released this
-// frame and react accordingly
+// process all input
 void processInput(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
@@ -380,27 +361,23 @@ void processInput(GLFWwindow *window) {
     cameraPos += cameraSpeed * cameraFront;
 
     glm::vec3 direction;
-    if (glfwGetKey(window, GLFW_KEY_RIGHT)==GLFW_PRESS){
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS){
         yaw += sensitivity;
         direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
         direction.y = sin(glm::radians(pitch));
         direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
         cameraFront = glm::normalize(direction);
     }
-    if (glfwGetKey(window, GLFW_KEY_LEFT)==GLFW_PRESS){
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS){
         yaw -= sensitivity;
         direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
         direction.y = sin(glm::radians(pitch));
         direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
         cameraFront = glm::normalize(direction);
     }
-
 }
 
-// glfw: whenever the window size changed (by OS or user resize) this callback
-// function executes
+// glfw: whenever the window size changes this callback function executes
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
-    // make sure the viewport matches the new window dimensions; note that width
-    // and height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
 }
