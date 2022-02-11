@@ -394,13 +394,6 @@ void processInput(GLFWwindow *window) {
         direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
         cameraFront = glm::normalize(direction);
     }
-//    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-//        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-//    }
-//    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-//        cameraFront += glm::normalize(cameraFront) * sensitivity;
-//        glRotatef(90.0f, cameraPos.x, cameraPos.y, cameraPos.z);
-//    }
 
 }
 
@@ -410,37 +403,4 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
     // make sure the viewport matches the new window dimensions; note that width
     // and height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
-}
-
-// glfw: whenever the mouse moves, this callback is called
-void mouse_callback(GLFWwindow *window, double xposd, double yposd) {
-//    float xpos = static_cast<float>(xposd);
-////    float ypos = static_cast<float>(yposd);
-//    if (mouse) {
-//        lastX = xpos;
-////        lastY = ypos;
-//        mouse = false;
-//    }
-//
-//    float xoffset = xpos - lastX;
-////    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
-//    lastX = xpos;
-////    lastY = ypos;
-//
-//    float sensitivity = 0.1f;
-//    xoffset *= sensitivity;
-////    yoffset *= sensitivity;
-//    yaw += xoffset;
-////    pitch += yoffset;
-//
-//    if (pitch > 90.0f)
-//        pitch = 90.0f;
-//    if (pitch < -90.0f)
-//        pitch = -90.0f;
-//
-//    glm::vec3 direction;
-//    direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-//    direction.y = sin(glm::radians(pitch));
-//    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-//    cameraFront = glm::normalize(direction);
 }
