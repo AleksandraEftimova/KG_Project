@@ -162,26 +162,7 @@ int main() {
             glm::vec3(80.0f, 0.0f, 60.0f),
             glm::vec3(80.0f, 0.0f, 70.0f),
             glm::vec3(80.0f, 0.0f, 80.0f),
-            //turn right (8), opt.1
-            glm::vec3(80.0f, 0.0f, 80.0f),
-            glm::vec3(70.0f, 0.0f, 80.0f),
-            glm::vec3(60.0f, 0.0f, 80.0f),
-            glm::vec3(50.0f, 0.0f, 80.0f),
-            glm::vec3(40.0f, 0.0f, 80.0f),
-            glm::vec3(30.0f, 0.0f, 80.0f),
-            glm::vec3(20.0f, 0.0f, 80.0f),
-            glm::vec3(10.0f, 0.0f, 80.0f),
-            glm::vec3(0.0f, 0.0f, 80.0f),
-            //turn right (8)
-            glm::vec3(0.0f, 0.0f, 70.0f),
-            glm::vec3(0.0f, 0.0f, 60.0f),
-            glm::vec3(0.0f, 0.0f, 50.0f),
-            glm::vec3(0.0f, 0.0f, 40.0f),
-            glm::vec3(0.0f, 0.0f, 30.0f),
-            glm::vec3(0.0f, 0.0f, 20.0f),
-            glm::vec3(0.0f, 0.0f, 10.0f),
-            glm::vec3(0.0f, 0.0f, 0.0f),
-            //turn left (5), opt.2
+            //turn left (5)
             glm::vec3(90.0f, 0.0f, 80.0f),
             glm::vec3(100.0f, 0.0f, 80.0f),
             glm::vec3(110.0f, 0.0f, 80.0f),
@@ -237,7 +218,34 @@ int main() {
             glm::vec3(0.0f, 0.0f, 100.0f),
             glm::vec3(0.0f, 0.0f, 90.0f),
             glm::vec3(0.0f, 0.0f, 80.0f),
-            //117 so far
+            //turn left (8)
+            glm::vec3(-10.0f, 0.0f, 80.0f),
+            glm::vec3(-20.0f, 0.0f, 80.0f),
+            glm::vec3(-30.0f, 0.0f, 80.0f),
+            glm::vec3(-40.0f, 0.0f, 80.0f),
+            glm::vec3(-50.0f, 0.0f, 80.0f),
+            glm::vec3(-60.0f, 0.0f, 80.0f),
+            glm::vec3(-70.0f, 0.0f, 80.0f),
+            glm::vec3(-80.0f, 0.0f, 80.0f),
+            //turn right (8)
+            glm::vec3(-80.0f, 0.0f, 70.0f),
+            glm::vec3(-80.0f, 0.0f, 60.0f),
+            glm::vec3(-80.0f, 0.0f, 50.0f),
+            glm::vec3(-80.0f, 0.0f, 40.0f),
+            glm::vec3(-80.0f, 0.0f, 30.0f),
+            glm::vec3(-80.0f, 0.0f, 20.0f),
+            glm::vec3(-80.0f, 0.0f, 10.0f),
+            glm::vec3(-80.0f, 0.0f, 0.0f),
+            //turn right (8)
+            glm::vec3(-70.0f, 0.0f, 0.0f),
+            glm::vec3(-60.0f, 0.0f, 0.0f),
+            glm::vec3(-50.0f, 0.0f, 0.0f),
+            glm::vec3(-40.0f, 0.0f, 0.0f),
+            glm::vec3(-30.0f, 0.0f, 0.0f),
+            glm::vec3(-20.0f, 0.0f, 0.0f),
+            glm::vec3(-10.0f, 0.0f, 0.0f),
+            glm::vec3(0.0f, 0.0f, 0.0f),
+            //125 so far
     };
 
     unsigned int VBO, VAO;
@@ -336,9 +344,8 @@ int main() {
 
         // render boxes
         glBindVertexArray(VAO);
-        for (unsigned int i = 0; i < 118; i++) {
-            // calculate the model matrix for each object and pass it to shader before
-            // drawing
+        for (unsigned int i = 0; i < 125; i++) {
+            // calculate the model matrix for each object and pass it to shader before drawing
             glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
             model = glm::translate(model, cubePositions[i]);
             transform = glm::translate(transform, glm::vec3(0.0f, 0.0f, 1.0f));
@@ -368,40 +375,31 @@ void processInput(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
-//    float x=0.0f;
-//    float z=-1.0f;
-    float sensitivity = 0.1f;
+    float sensitivity = 0.12f;
     float cameraSpeed = 20.0f * deltaTime;
     cameraPos += cameraSpeed * cameraFront;
-//    if ((z=-1.0f) || (z=1.0f)) {
-//        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-//            z=0.0f;
-//            x=-1.0f;
-//            cameraFront = glm::vec3(x, 0.0f, z);
-//        }
-//        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-//            z=0.0f;
-//            x=1.0f;
-//            cameraFront = glm::vec3(x, 0.0f, z);
-//        }
-//    }
 
+    glm::vec3 direction;
+    if (glfwGetKey(window, GLFW_KEY_RIGHT)==GLFW_PRESS){
+        yaw += sensitivity;
+        direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+        direction.y = sin(glm::radians(pitch));
+        direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+        cameraFront = glm::normalize(direction);
+    }
+    if (glfwGetKey(window, GLFW_KEY_LEFT)==GLFW_PRESS){
+        yaw -= sensitivity;
+        direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+        direction.y = sin(glm::radians(pitch));
+        direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+        cameraFront = glm::normalize(direction);
+    }
 //    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
 //        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
 //    }
 //    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-//        cameraFront += glm::normalize(cameraFront) * cameraSpeed;
-//    }
-
-//    float xoffset = x;
-//    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-//        xoffset *= sensitivity;
-//        yaw += xoffset;
-//        glm::vec3 direction;
-//        direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-//        direction.y = sin(glm::radians(pitch));
-//        direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-//        cameraFront = glm::normalize(direction);
+//        cameraFront += glm::normalize(cameraFront) * sensitivity;
+//        glRotatef(90.0f, cameraPos.x, cameraPos.y, cameraPos.z);
 //    }
 
 }
@@ -416,35 +414,33 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
 
 // glfw: whenever the mouse moves, this callback is called
 void mouse_callback(GLFWwindow *window, double xposd, double yposd) {
-    float xpos = static_cast<float>(xposd);
-//    float ypos = static_cast<float>(yposd);
-    if (mouse) {
-        lastX = xpos;
-//        lastY = ypos;
-        mouse = false;
-    }
-
-    float xoffset = xpos - lastX;
-//    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
-    lastX = xpos;
-//    lastY = ypos;
-
-    float sensitivity = 0.1f;
-    xoffset *= sensitivity;
-//    yoffset *= sensitivity;
-    yaw += xoffset;
-//    pitch += yoffset;
-
-//     make sure that when pitch is out of bounds, screen doesn't get flipped
-//    constraint values for camera movements along the pitch
-    if (pitch > 90.0f)
-        pitch = 90.0f;
-    if (pitch < -90.0f)
-        pitch = -90.0f;
-
-    glm::vec3 direction;
-    direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-    direction.y = sin(glm::radians(pitch));
-    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-    cameraFront = glm::normalize(direction);
+//    float xpos = static_cast<float>(xposd);
+////    float ypos = static_cast<float>(yposd);
+//    if (mouse) {
+//        lastX = xpos;
+////        lastY = ypos;
+//        mouse = false;
+//    }
+//
+//    float xoffset = xpos - lastX;
+////    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+//    lastX = xpos;
+////    lastY = ypos;
+//
+//    float sensitivity = 0.1f;
+//    xoffset *= sensitivity;
+////    yoffset *= sensitivity;
+//    yaw += xoffset;
+////    pitch += yoffset;
+//
+//    if (pitch > 90.0f)
+//        pitch = 90.0f;
+//    if (pitch < -90.0f)
+//        pitch = -90.0f;
+//
+//    glm::vec3 direction;
+//    direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+//    direction.y = sin(glm::radians(pitch));
+//    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+//    cameraFront = glm::normalize(direction);
 }
