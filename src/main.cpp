@@ -83,7 +83,7 @@ int main() {
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     //floor vertices
-    float vertices[] = {
+    float vertices1[] = {
             //x      y      z       texture
             -5.0f, 0.0f, 5.0f,   0.0f, 0.0f,
             5.0f,  0.0f, 5.0f,   1.0f, 0.0f,
@@ -95,7 +95,7 @@ int main() {
     };
 
     // world space positions of our floor
-    glm::vec3 cubePositions[] = {
+    glm::vec3 floorPositions[] = {
             glm::vec3(0.0f, 0.0f, 0.0f),
             //straight (8)
             glm::vec3(0.0f, 0.0f, -10.0f),
@@ -249,7 +249,7 @@ int main() {
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices1), vertices1, GL_STATIC_DRAW);
 
     // position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), nullptr);
@@ -331,7 +331,7 @@ int main() {
         glBindVertexArray(VAO);
         for (unsigned int i = 0; i < 125; i++) {
             glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-            model = glm::translate(model, cubePositions[i]);
+            model = glm::translate(model, floorPositions[i]);
             transform = glm::translate(transform, glm::vec3(0.0f, 0.0f, 1.0f));
             ourShader.setMat4("model", model);
 
