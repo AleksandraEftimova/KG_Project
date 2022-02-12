@@ -94,6 +94,11 @@ int main() {
             -5.0f, 0.0f, 5.0f,   0.0f, 0.0f
     };
 
+    struct points {
+        float x;
+        float y;
+        float z;
+    };
     // world space positions of our floor
     glm::vec3 floorPositions[] = {
             glm::vec3(0.0f, 0.0f, 0.0f),
@@ -242,6 +247,17 @@ int main() {
             //125 so far
     };
 
+//    float vertices2[] = {
+//            //x      y      z       texture
+//            30.0f, 0.0f, .0f,   0.0f, 0.0f,
+//            5.0f,  0.0f, 5.0f,   1.0f, 0.0f,
+//            5.0f,  0.0f, -5.0f,  1.0f, 1.0f,
+//
+//            5.0f,  0.0f, -5.0f,  1.0f, 1.0f,
+//            -5.0f, 0.0f, -5.0f,  0.0f, 1.0f,
+//            -5.0f, 0.0f, 5.0f,   0.0f, 0.0f
+//    };
+
     unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -356,7 +372,7 @@ void processInput(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
-    float sensitivity = 0.12f;
+    float sensitivity = 0.1f;
     float cameraSpeed = 20.0f * deltaTime;
     cameraPos += cameraSpeed * cameraFront;
 
