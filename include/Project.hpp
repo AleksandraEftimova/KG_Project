@@ -1,6 +1,6 @@
 // Preprocessor Directives
-#ifndef OpenGLPrj
-#define OpenGLPrj
+#ifndef Project
+#define Project
 #pragma once
 
 // System Headers

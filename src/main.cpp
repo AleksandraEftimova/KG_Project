@@ -1,9 +1,8 @@
-#include <OpenGLPrj.hpp>
+#include <Project.hpp>
 #include <GLFW/glfw3.h>
 #include <Shader.hpp>
 #include <iostream>
 #include <string>
-#include <vector>
 
 const std::string program_name = ("Temple Run-based game");
 
@@ -11,8 +10,8 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
 
 // settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 800;
+const unsigned int SCR_WIDTH = 1200;
+const unsigned int SCR_HEIGHT = 600;
 
 // camera
 float x=0.0f;
@@ -29,8 +28,6 @@ static glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 static float yaw = -90.0f;
 
 static float pitch = 0.0f;
-static float lastX = 800.0f / 2.0f;
-static float lastY = 600.0f / 2.0f;
 static float fov = 45.0f;
 
 // timing
@@ -372,7 +369,7 @@ void processInput(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
-    float sensitivity = 0.1f;
+    float sensitivity = 0.12f;
     float cameraSpeed = 20.0f * deltaTime;
     cameraPos += cameraSpeed * cameraFront;
 

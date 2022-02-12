@@ -4,7 +4,7 @@ project(Project)
 set(CMAKE_CXX_STANDARD 14)
 
 add_executable(Project src/main.cpp src/Shader.cpp
-        include/OpenGLPrj.hpp include/Shader.hpp
+        include/Project.hpp include/Shader.hpp
         .gitattributes .gitignore .gitmodules
         vendor/glad/src/glad.c
         res/shaders/shader.frag res/shaders/shader.vert)
