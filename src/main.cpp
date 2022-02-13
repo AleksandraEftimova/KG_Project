@@ -344,7 +344,7 @@ void processInput(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
-    float sensitivity = 0.12f;
+    float sensitivity = 0.1f;
     float cameraSpeed = 20.0f * deltaTime;
 
     // camera always moves towards the front
