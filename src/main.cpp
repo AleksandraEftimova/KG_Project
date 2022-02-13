@@ -21,12 +21,7 @@ static glm::vec3 cameraPos = glm::vec3(x, y, z);
 static glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 static glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
-
-// yaw is initialized to -90.0 degrees since a yaw of 0.0
-// results in a direction vector pointing to the right so we
-// initially rotate a bit to the left.
 static float yaw = -90.0f;
-
 static float pitch = 0.0f;
 static float fov = 45.0f;
 
@@ -58,9 +53,6 @@ int main() {
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    // tell GLFW to capture our mouse
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
     // glad: load all OpenGL function pointers
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) {
         std::cout << "Failed to initialize GLAD" << std::endl;
@@ -78,8 +70,8 @@ int main() {
     Shader ourShader(shader_location + used_shaders + std::string(".vert"),
                      shader_location + used_shaders + std::string(".frag"));
 
-    // set up vertex data (and buffer(s)) and configure vertex attributes
-    //floor vertices
+    // set up vertex data and configure vertex attributes
+    // floor vertices
     float vertices[] = {
             //x      y      z       texture
             -5.0f, 0.0f, 5.0f,   0.0f, 0.0f,
@@ -91,7 +83,7 @@ int main() {
             -5.0f, 0.0f, 5.0f,   0.0f, 0.0f
     };
 
-    // world space positions of our floor
+    // world space positions for our floor tiles
     glm::vec3 floorPositions[] = {
             glm::vec3(0.0f, 0.0f, 0.0f),
             //straight (8)
@@ -153,7 +145,7 @@ int main() {
             glm::vec3(80.0f, 0.0f, 60.0f),
             glm::vec3(80.0f, 0.0f, 70.0f),
             glm::vec3(80.0f, 0.0f, 80.0f),
-            //turn left (5)
+            //turn left again (5)
             glm::vec3(90.0f, 0.0f, 80.0f),
             glm::vec3(100.0f, 0.0f, 80.0f),
             glm::vec3(110.0f, 0.0f, 80.0f),
@@ -188,7 +180,7 @@ int main() {
             glm::vec3(100.0f, 0.0f, 180.0f),
             glm::vec3(90.0f, 0.0f, 180.0f),
             glm::vec3(80.0f, 0.0f, 180.0f),
-            //turn right (5)
+            //turn right again (5)
             glm::vec3(80.0f, 0.0f, 170.0f),
             glm::vec3(80.0f, 0.0f, 160.0f),
             glm::vec3(80.0f, 0.0f, 150.0f),
@@ -227,7 +219,7 @@ int main() {
             glm::vec3(-80.0f, 0.0f, 20.0f),
             glm::vec3(-80.0f, 0.0f, 10.0f),
             glm::vec3(-80.0f, 0.0f, 0.0f),
-            //turn right (8)
+            //turn right again (8)
             glm::vec3(-70.0f, 0.0f, 0.0f),
             glm::vec3(-60.0f, 0.0f, 0.0f),
             glm::vec3(-50.0f, 0.0f, 0.0f),
@@ -236,7 +228,7 @@ int main() {
             glm::vec3(-20.0f, 0.0f, 0.0f),
             glm::vec3(-10.0f, 0.0f, 0.0f),
             glm::vec3(0.0f, 0.0f, 0.0f),
-            //125 so far
+            //125 in total
     };
 
     unsigned int VBO, VAO;
@@ -286,7 +278,6 @@ int main() {
 
     // render loop
     while (!glfwWindowShouldClose(window)) {
-        // per-frame time logic
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
@@ -312,7 +303,7 @@ int main() {
                                                 0.1f, 100.0f);
         ourShader.setMat4("projection", projection);
 
-        // camera/view transformation
+        // camera/view
         // lookAt(position, target, up vector)
         glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
         ourShader.setMat4("view", view);
@@ -327,7 +318,7 @@ int main() {
 
         glBindVertexArray(VAO);
         for (unsigned int i = 0; i < 125; i++) {
-            glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+            glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, floorPositions[i]);
             transform = glm::translate(transform, glm::vec3(0.0f, 0.0f, 1.0f));
             ourShader.setMat4("model", model);
@@ -355,6 +346,8 @@ void processInput(GLFWwindow *window) {
 
     float sensitivity = 0.12f;
     float cameraSpeed = 20.0f * deltaTime;
+
+    // camera always moves towards the front
     cameraPos += cameraSpeed * cameraFront;
 
     glm::vec3 direction;
