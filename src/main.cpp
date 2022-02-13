@@ -365,6 +365,13 @@ void processInput(GLFWwindow *window) {
         direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
         cameraFront = glm::normalize(direction);
     }
+
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
+        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed * 0.5f;
+    }
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
+        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed * 0.5f;
+    }
 }
 
 // glfw: whenever the window size changes this callback function executes
