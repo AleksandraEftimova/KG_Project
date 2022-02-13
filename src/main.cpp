@@ -10,12 +10,12 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
 
 // settings
-const unsigned int SCR_WIDTH = 1200;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int SCR_WIDTH = 800;
+const unsigned int SCR_HEIGHT = 800;
 
 // camera
 float x=0.0f;
-float y=3.0f;
+float y=4.0f;
 float z=0.0f;
 static glm::vec3 cameraPos = glm::vec3(x, y, z);
 static glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -91,11 +91,6 @@ int main() {
             -5.0f, 0.0f, 5.0f,   0.0f, 0.0f
     };
 
-    struct points {
-        float x;
-        float y;
-        float z;
-    };
     // world space positions of our floor
     glm::vec3 floorPositions[] = {
             glm::vec3(0.0f, 0.0f, 0.0f),
@@ -243,17 +238,6 @@ int main() {
             glm::vec3(0.0f, 0.0f, 0.0f),
             //125 so far
     };
-
-//    float vertices2[] = {
-//            //x      y      z       texture
-//            30.0f, 0.0f, .0f,   0.0f, 0.0f,
-//            5.0f,  0.0f, 5.0f,   1.0f, 0.0f,
-//            5.0f,  0.0f, -5.0f,  1.0f, 1.0f,
-//
-//            5.0f,  0.0f, -5.0f,  1.0f, 1.0f,
-//            -5.0f, 0.0f, -5.0f,  0.0f, 1.0f,
-//            -5.0f, 0.0f, 5.0f,   0.0f, 0.0f
-//    };
 
     unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
